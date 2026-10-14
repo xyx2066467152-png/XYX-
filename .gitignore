@@ -1,0 +1,22 @@
+# Biometric features, enrollment photos, firmware dumps, logs, build files
+*.bin
+*.hex
+*.axf
+*.o
+*.obj
+*.pyc
+__pycache__/
+evidence/
+backup/
+db/
+db_img/
+Objects/
+Listings/
+DebugConfig/
+*.uvprojx.user
+.deps/
+.build/
+Tests/results*/
+*.uvoptx
+*.uvguix.*
+stm32/AccessSkeleton/Config/rfid_authorized_uid.h

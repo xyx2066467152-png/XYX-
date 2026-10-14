@@ -1,0 +1,5 @@
+#ifndef RFID_AUTHORIZED_UID_H
+#define RFID_AUTHORIZED_UID_H
+/* Copy to rfid_authorized_uid.h and replace these bytes with your card. */
+#define AUTHORIZED_RFID_UID_BYTES 0x00U, 0x00U, 0x00U, 0x00U
+#endif
