@@ -50,7 +50,10 @@ class IdentityModule:
         for event in confirmed:
             self.last_event = EVENT_NUMBER[event['type']]
             self.last_user_id = event['user_id']
-            self.last_similarity = event['similarity']
+            # UNKNOWN scores are local diagnostics only. Keep the published V1
+            # STATUS semantics unchanged: similarity describes a sent identity.
+            self.last_similarity = (event['similarity']
+                                    if event['type'] == AUTH_SUCCESS else 0.0)
             kind = event['type']
             if kind == AUTH_SUCCESS:
                 self.link.send_message(CMD_AUTH_SUCCESS,user_id=event['user_id'],

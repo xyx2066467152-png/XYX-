@@ -109,6 +109,20 @@ class ModuleIntegrationTests(unittest.TestCase):
         self.observe(make_event(AUTH_SUCCESS, 1, 0.90), (400, 475, 550))
         self.assertEqual([x['cmd'] for x in self.uart.messages()], [CMD_UNKNOWN, CMD_AUTH_SUCCESS])
 
+    def test_scored_unknown_stays_diagnostic_only_on_v1_wire(self):
+        self.module.ready()
+        self.uart.messages()
+        unknown = make_event(UNKNOWN, similarity=0.7499, reason=1)
+        self.observe(unknown, (0, 75, 150))
+        self.assertEqual(len(FrameParser().feed(self.uart.outgoing, 0)[0]['data']), 1)
+        messages = self.uart.messages()
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0]['cmd'], CMD_UNKNOWN)
+        self.assertEqual(messages[0]['reason'], 1)
+        status = self.request_status(200)
+        self.assertEqual(status['last_event'], 2)
+        self.assertEqual(status['last_similarity_q'], 0)
+
     def test_bad_requests_throttle_and_known_wrong_direction_is_dropped(self):
         self.module.ready()
         self.uart.messages()

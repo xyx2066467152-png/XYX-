@@ -15,7 +15,9 @@ def result_event(face_count, matches, user_ids, threshold):
     if not isinstance(score, (int,float)) or isinstance(score,bool) or not 0 <= score <= 1:
         return make_event(ERROR, error_code=1, detail=2)
     if name is None or score < threshold:
-        return make_event(UNKNOWN, reason=1)
+        # Keep the raw best score for on-board diagnostics. The V1 UNKNOWN
+        # frame still sends only the reason byte; this cannot grant access.
+        return make_event(UNKNOWN, similarity=float(score), reason=1)
     if name not in user_ids:
-        return make_event(UNKNOWN, reason=3)
+        return make_event(UNKNOWN, similarity=float(score), reason=3)
     return make_event(AUTH_SUCCESS, user_id=user_ids[name], similarity=float(score))

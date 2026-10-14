@@ -29,7 +29,9 @@ class IdentityResultTests(unittest.TestCase):
 
     def test_threshold_boundary_matches_official_greater_or_equal(self):
         ids = {'USER01': 1}
-        self.assertEqual(result_event(1, [('USER01', 0.749999)], ids, 0.75)['type'], UNKNOWN)
+        rejected = result_event(1, [('USER01', 0.749999)], ids, 0.75)
+        self.assertEqual(rejected['type'], UNKNOWN)
+        self.assertEqual(rejected['similarity'], 0.749999)
         for score in (0.75, 0.750001, 1.0):
             with self.subTest(score=score):
                 self.assertEqual(result_event(1, [('USER01', score)], ids, 0.75)['type'], AUTH_SUCCESS)
@@ -41,8 +43,10 @@ class IdentityResultTests(unittest.TestCase):
         self.assertEqual((multiple['type'], multiple['reason']), (UNKNOWN, 2))
         unmatched = result_event(1, [(None, 0.95)], ids, 0.75)
         self.assertEqual((unmatched['type'], unmatched['reason']), (UNKNOWN, 1))
+        self.assertEqual(unmatched['similarity'], 0.95)
         unmapped = result_event(1, [('not_serialized', 0.95)], ids, 0.75)
         self.assertEqual((unmapped['type'], unmapped['reason']), (UNKNOWN, 3))
+        self.assertEqual(unmapped['similarity'], 0.95)
 
     def test_inconsistent_or_nonfinite_model_output_is_error(self):
         ids = {'USER01': 1}
